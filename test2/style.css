@@ -1,0 +1,142 @@
+/* Basic page reset and setup */
+html, body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #000;
+    color: #fff;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+body { height: 400vh; }
+
+/* Layer 1 Styles (Unchanged) */
+.glass-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; display: flex; z-index: 100; }
+.glass-panel { height: 100%; display: flex; align-items: center; background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(10px); transition: transform 1.2s ease-out; overflow: hidden; }
+.left-panel { width: 50%; justify-content: flex-end; }
+.right-panel { width: 50%; justify-content: flex-start; }
+.text-part { font-size: 10vw; font-weight: bold; color: rgba(255, 255, 255, 0.85); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 15px rgba(0, 0, 0, 0.5); white-space: nowrap; }
+.left-panel .text-part { padding-right: 10px; }
+.right-panel .text-part { padding-left: 10px; }
+.left-panel.split { transform: translateX(-100%); }
+.right-panel.split { transform: translateX(100%); }
+
+/* Layer 2 Styles */
+.main-content {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    gap: 3rem; z-index: 1;
+    transform: scale(0.8); opacity: 0.5;
+    perspective: 1000px;
+    visibility: visible;
+    transition: transform 1.5s ease-out, opacity 1s ease-out, visibility 0s;
+}
+.main-content.zoomed {
+    transform: scale(1);
+    opacity: 1;
+    z-index: 2; /* Z-INDEX FIX: Active layer is on top */
+}
+.main-content .widget { transition: transform 1.5s cubic-bezier(0.5, 0, 0.5, 1); }
+
+.main-content.pass-through {
+    z-index: 3;
+    visibility: hidden;
+    transition: visibility 0s linear 1.5s;
+}
+.main-content.pass-through .widget:first-child { transform: translateX(-200%) scale(2); }
+.main-content.pass-through .widget:last-child { transform: translateX(200%) scale(2); }
+
+/* Generic Widget Styles */
+.widget { width: 40vw; max-width: 600px; height: 85vh; position: relative; overflow: hidden; padding: 2px; background: transparent; border-radius: 16px; flex-shrink: 0; }
+.widget-content { background: #111; color: #ddd; height: 100%; width: 100%; border-radius: 14px; padding: 2.5rem; box-sizing: border-box; text-align: center; }
+.widget-content h2 { margin-top: 0; color: #fff; font-size: 2rem; margin-bottom: 0; }
+.widget-content hr { width: 70%; border: none; height: 1px; background-color: rgba(255, 255, 255, 0.3); margin: 1.5rem auto; }
+.widget-content p { font-size: 1rem; line-height: 1.6; margin: 0 auto; }
+
+/* Light Effect */
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.widget::before, .resume-button::before {
+    content: ''; position: absolute; z-index: -1; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent, rgba(255, 255, 255, 0.6), transparent 30%); animation: rotate 6s linear infinite;
+}
+
+/* Layer 3 Styles */
+.layer-three-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    gap: 3rem; z-index: 0;
+    opacity: 0; transform: scale(0.8);
+    filter: blur(8px) brightness(0.5);
+    transition: transform 1.8s ease-out, filter 1.8s ease-out, opacity 0.5s ease-out;
+    transition-delay: 0.3s;
+    perspective: 1000px;
+    visibility: visible;
+}
+.layer-three-container.preview {
+    opacity: 1;
+    z-index: 1; /* Sits just behind active layer */
+}
+.layer-three-container.visible {
+    transform: scale(1);
+    filter: blur(0px) brightness(1);
+    z-index: 2; /* Sits on top when active */
+}
+.left-column { width: 40vw; max-width: 600px; height: 85vh; display: flex; flex-direction: column; justify-content: flex-end; transition: transform 1.5s cubic-bezier(0.5, 0, 0.5, 1); }
+.photo-container { height: 70%; width: 100%; position: relative; z-index: 5; }
+.photo-container img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+.left-column .widget { height: 50%; width: 100%; margin-top: -80px; }
+#l3-right-widget { transition: transform 1.5s cubic-bezier(0.5, 0, 0.5, 1); }
+.layer-three-container.pass-through {
+    z-index: 3;
+    visibility: hidden;
+    transition: visibility 0s linear 1.5s;
+}
+.layer-three-container.pass-through .left-column { transform: translateX(-200%) scale(2); }
+.layer-three-container.pass-through #l3-right-widget { transform: translateX(200%) scale(2); }
+
+/* Layer 4 Styles */
+.layer-four-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    gap: 3rem; z-index: 0;
+    opacity: 0; transform: scale(0.8);
+    filter: blur(8px) brightness(0.5);
+    transition: transform 1.8s ease-out, filter 1.8s ease-out, opacity 1s ease-out;
+    transition-delay: 0.3s;
+}
+.layer-four-container.preview {
+    opacity: 1;
+    z-index: 1; /* Sits just behind active layer */
+}
+.layer-four-container.visible {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px) brightness(1);
+    z-index: 2; /* Sits on top when active */
+}
+.l4-left-column { width: 40vw; max-width: 600px; height: 85vh; }
+.l4-right-column { width: 40vw; max-width: 600px; height: 85vh; display: flex; flex-direction: column; justify-content: space-between; }
+.l4-right-column .widget { height: 75%; width: 100%; }
+.widget.tall-widget { width: 100%; height: 100%; }
+.resume-button {
+    display: flex; justify-content: center; align-items: center;
+    width: 100%; height: 15%;
+    text-decoration: none; font-size: 1.5rem; font-weight: bold;
+    position: relative; overflow: hidden; border-radius: 16px;
+    padding: 2px;
+}
+.resume-button span {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    background-color: #222; border-radius: 14px;
+    color: #fff; transition: background-color 0.3s;
+}
+.resume-button:hover span {
+    background-color: #333;
+}
+
+/* Scroll Indicator (Unchanged) */
+.scroll-indicator { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 101; color: #fff; opacity: 1; transition: opacity 0.5s; }
+.scroll-indicator.hidden { opacity: 0; }
